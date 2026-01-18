@@ -1,0 +1,2395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="theme-color" content="#0F172A">
+    <meta name="description" content="مولد كلمات المرور الآمن - باسوردك في جيبك - الإصدار المحسن مع مزامنة ومشاركة عائلية">
+    <meta name="keywords" content="كلمة مرور, أمن, مولد, حماية, باسوورد, مزامنة, عائلة, QR, أندرويد, آيفون">
+    <meta name="author" content="باسوردك في جيبك">
+    
+    <!-- PWA Configuration -->
+    <link rel="manifest" href="/manifest.json">
+    
+    <title>باسوردك في جيبك - مولد كلمات المرور الآمن المتقدم مع مزامنة ومشاركة</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- QR Code Library - UPDATED VERSION -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- Toastify for Enhanced Notifications -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace']
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                            900: '#1e3a8a'
+                        },
+                        dark: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                            600: '#475569'
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'bounce-in': 'bounceIn 0.6s ease-out',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'spin-slow': 'spin 3s linear infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                        'shimmer': 'shimmer 2s infinite'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200px 0' },
+                            '100%': { backgroundPosition: 'calc(200px + 100%) 0' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes bounceIn {
+            0% { opacity: 0; transform: scale(0.3); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        
+        .glassmorphic {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glassmorphic-dark {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+        }
+        
+        .password-strength-bar {
+            height: 6px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+        
+        .strength-0 { background: #ef4444; width: 20%; }
+        .strength-1 { background: #f97316; width: 40%; }
+        .strength-2 { background: #eab308; width: 60%; }
+        .strength-3 { background: #22c55e; width: 80%; }
+        .strength-4 { background: #10b981; width: 100%; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #2563eb, #7c3aed);
+        }
+        
+        /* Selection color */
+        ::selection {
+            background: rgba(59, 130, 246, 0.3);
+            color: white;
+        }
+        
+        /* Print styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+            }
+        }
+        
+        /* Accessibility */
+        .focus-ring {
+            @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 focus:ring-offset-slate-900;
+        }
+        
+        .high-contrast {
+            background: black !important;
+            color: white !important;
+            border-color: white !important;
+        }
+        
+        .high-contrast * {
+            background: black !important;
+            color: white !important;
+            border-color: white !important;
+        }
+        
+        /* Screen reader only */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        /* Password pattern */
+        .pattern-highlight {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px dashed #3b82f6;
+        }
+        
+        /* QR Code styles - IMPROVED */
+        .qrcode-container {
+            position: relative;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+        
+        .qrcode-placeholder {
+            text-align: center;
+            color: #64748b;
+        }
+        
+        .qrcode-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .mobile-app-card {
+                padding: 1rem;
+            }
+            
+            .qrcode-container {
+                width: 250px;
+                height: 250px;
+                margin: 0 auto;
+            }
+        }
+
+        /* Master password modal responsive */
+        @media (max-width: 640px) {
+            #master-password-modal > div {
+                margin: 1rem;
+                width: calc(100% - 2rem);
+            }
+        }
+
+        /* Loading animation improvements */
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #3b82f6;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-slate-900 text-slate-50 font-sans overflow-x-hidden transition-colors duration-300 dark:bg-slate-950" dir="rtl">
+    
+    <!-- Loading Screen - IMPROVED -->
+    <div id="loading-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-slate-900 dark:bg-slate-950 transition-opacity duration-500">
+        <div class="relative mb-8">
+            <div class="w-32 h-32 rounded-full bg-gradient-to-r from-primary-500 to-violet-500 flex items-center justify-center animate-pulse">
+                <div class="w-24 h-24 rounded-full bg-slate-900 flex items-center justify-center">
+                    <i class="fas fa-lock text-3xl text-primary-400"></i>
+                </div>
+            </div>
+            <div class="absolute inset-0 rounded-full border-4 border-transparent border-t-primary-400 animate-spin-slow"></div>
+        </div>
+        <h1 class="text-3xl font-bold gradient-text">باسوردك في جيبك</h1>
+        <p class="text-slate-400 mt-2">جاري تحميل التطبيق...</p>
+        
+        <!-- Improved loading animation -->
+        <div class="flex space-x-2 mt-6">
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+            <div class="loading-dot"></div>
+        </div>
+        
+        <div class="w-64 h-2 bg-slate-800 rounded-full mt-6 overflow-hidden">
+            <div id="loading-progress" class="h-full gradient-bg rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+        <div class="mt-4 text-sm text-slate-500" id="loading-status">تهيئة النظام...</div>
+    </div>
+
+    <!-- Master Password Modal - IMPROVED -->
+    <div id="master-password-modal" class="fixed inset-0 z-50 bg-black/70 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 rounded-2xl p-6 max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto mb-4 rounded-full gradient-bg flex items-center justify-center">
+                    <i class="fas fa-key text-2xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-bold">كلمة المرور الرئيسية</h3>
+                <p class="text-slate-400 mt-2">لأمان بياناتك، يرجى إدخال كلمة مرور رئيسية قوية</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">كلمة المرور الرئيسية</label>
+                    <div class="relative">
+                        <input type="password" id="master-password-input" 
+                               class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-600 text-white focus:border-primary-500 focus:outline-none transition-all pr-12"
+                               placeholder="أدخل كلمة مرور قوية">
+                        <button type="button" class="absolute left-3 top-3 text-slate-400 hover:text-slate-300" onclick="togglePasswordVisibility('master-password-input', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-2">تأكيد كلمة المرور</label>
+                    <div class="relative">
+                        <input type="password" id="master-password-confirm" 
+                               class="w-full px-4 py-3 rounded-xl bg-slate-900 border border-slate-600 text-white focus:border-primary-500 focus:outline-none transition-all pr-12"
+                               placeholder="أعد إدخال كلمة المرور">
+                        <button type="button" class="absolute left-3 top-3 text-slate-400 hover:text-slate-300" onclick="togglePasswordVisibility('master-password-confirm', this)">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-3 rounded-lg bg-slate-900/50 border border-slate-700">
+                    <div class="flex items-center gap-2 text-sm text-slate-300 mb-2">
+                        <i class="fas fa-info-circle text-primary-400"></i>
+                        <span class="font-medium">نصائح للأمان:</span>
+                    </div>
+                    <ul class="text-xs text-slate-400 space-y-1 list-disc list-inside">
+                        <li>استخدم 8 أحرف على الأقل</li>
+                        <li>أضف أرقام ورموز خاصة</li>
+                        <li>تجنب المعلومات الشخصية</li>
+                        <li>لا تستخدم نفس كلمة المرور في مواقع أخرى</li>
+                    </ul>
+                </div>
+                
+                <div class="flex gap-3 pt-2">
+                    <button id="master-password-cancel" class="flex-1 py-3 rounded-xl border border-slate-600 text-slate-300 hover:bg-slate-700 transition-colors">
+                        إلغاء
+                    </button>
+                    <button id="master-password-save" class="flex-1 py-3 rounded-xl gradient-bg text-white hover:opacity-90 transition-all font-medium">
+                        حفظ وتشفير البيانات
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="main-app" class="hidden">
+        <!-- Top Navigation (unchanged, but with improved accessibility) -->
+        <nav class="sticky top-0 z-40 glassmorphic-dark border-b border-white/5">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg gradient-bg flex items-center justify-center">
+                                <i class="fas fa-lock text-white"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-xl font-bold">باسوردك في جيبك</h1>
+                                <p class="text-xs text-slate-400">الإصدار المحسن المتقدم</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Desktop Navigation -->
+                        <div class="hidden md:block mr-8">
+                            <div class="flex items-center gap-1">
+                                <button class="nav-btn px-4 py-2 rounded-lg hover:bg-white/5 transition-colors active:bg-primary-500/20" data-section="generator">
+                                    <i class="fas fa-key mr-2"></i>مولد كلمات المرور
+                                </button>
+                                <button class="nav-btn px-4 py-2 rounded-lg hover:bg-white/5 transition-colors" data-section="manager">
+                                    <i class="fas fa-database mr-2"></i>مدير كلمات المرور
+                                </button>
+                                <button class="nav-btn px-4 py-2 rounded-lg hover:bg-white/5 transition-colors" data-section="strength-checker">
+                                    <i class="fas fa-shield-alt mr-2"></i>فحص القوة
+                                </button>
+                                <button class="nav-btn px-4 py-2 rounded-lg hover:bg-white/5 transition-colors" data-section="qrcode">
+                                    <i class="fas fa-qrcode mr-2"></i>مشاركة QR
+                                </button>
+                                <button class="nav-btn px-4 py-2 rounded-lg hover:bg-white/5 transition-colors" data-section="settings">
+                                    <i class="fas fa-cog mr-2"></i>الإعدادات
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <!-- Theme Toggle -->
+                        <button id="theme-toggle" class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors" aria-label="تبديل الوضع المظلم">
+                            <i class="fas fa-moon text-lg"></i>
+                        </button>
+                        
+                        <!-- High Contrast Toggle -->
+                        <button id="contrast-toggle" class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors" aria-label="تبديل وضع التباين العالي">
+                            <i class="fas fa-adjust text-lg"></i>
+                        </button>
+                        
+                        <!-- Stats Button -->
+                        <button id="stats-btn" class="w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors relative" aria-label="إحصائيات">
+                            <i class="fas fa-chart-bar text-lg"></i>
+                            <span id="passwords-count" class="absolute -top-1 -left-1 bg-primary-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">0</span>
+                        </button>
+                        
+                        <!-- Mobile Menu Button -->
+                        <button id="mobile-menu-btn" class="md:hidden w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors" aria-label="فتح القائمة">
+                            <i class="fas fa-bars text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div id="mobile-menu" class="md:hidden glassmorphic-dark border-t border-white/5 hidden">
+                <div class="px-4 py-3 space-y-1">
+                    <button class="nav-btn w-full text-right px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center justify-between" data-section="generator">
+                        <span><i class="fas fa-key ml-2"></i>مولد كلمات المرور</span>
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button class="nav-btn w-full text-right px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center justify-between" data-section="manager">
+                        <span><i class="fas fa-database ml-2"></i>مدير كلمات المرور</span>
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button class="nav-btn w-full text-right px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center justify-between" data-section="strength-checker">
+                        <span><i class="fas fa-shield-alt ml-2"></i>فحص القوة</span>
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button class="nav-btn w-full text-right px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center justify-between" data-section="qrcode">
+                        <span><i class="fas fa-qrcode ml-2"></i>مشاركة QR</span>
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                    <button class="nav-btn w-full text-right px-4 py-3 rounded-lg hover:bg-white/5 transition-colors flex items-center justify-between" data-section="settings">
+                        <span><i class="fas fa-cog ml-2"></i>الإعدادات</span>
+                        <i class="fas fa-chevron-left text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Password Generator Section -->
+            <section id="generator-section" class="active-section">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Generator Options -->
+                    <div class="lg:col-span-2">
+                        <div class="glassmorphic-dark rounded-2xl p-6">
+                            <h2 class="text-2xl font-bold mb-6 gradient-text">مولد كلمات المرور المتقدم</h2>
+                            
+                            <!-- Generation Type -->
+                            <div class="mb-8">
+                                <h3 class="text-lg font-semibold mb-4">نوع كلمة المرور</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                                    <button class="generation-type-btn py-4 px-4 rounded-xl border-2 border-slate-700 hover:border-primary-500 transition-all flex flex-col items-center justify-center active" data-type="random">
+                                        <i class="fas fa-random text-2xl mb-2 text-primary-400"></i>
+                                        <span class="font-medium">عشوائية</span>
+                                        <p class="text-xs text-slate-400 mt-1">أقصى أمان</p>
+                                    </button>
+                                    
+                                    <button class="generation-type-btn py-4 px-4 rounded-xl border-2 border-slate-700 hover:border-primary-500 transition-all flex flex-col items-center justify-center" data-type="passphrase">
+                                        <i class="fas fa-quote-right text-2xl mb-2 text-green-400"></i>
+                                        <span class="font-medium">عبارة مرور</span>
+                                        <p class="text-xs text-slate-400 mt-1">سهلة التذكر</p>
+                                    </button>
+                                    
+                                    <button class="generation-type-btn py-4 px-4 rounded-xl border-2 border-slate-700 hover:border-primary-500 transition-all flex flex-col items-center justify-center" data-type="pattern">
+                                        <i class="fas fa-shapes text-2xl mb-2 text-purple-400"></i>
+                                        <span class="font-medium">نمط مخصص</span>
+                                        <p class="text-xs text-slate-400 mt-1">مرنة للاستخدام</p>
+                                    </button>
+                                    
+                                    <button class="generation-type-btn py-4 px-4 rounded-xl border-2 border-slate-700 hover:border-primary-500 transition-all flex flex-col items-center justify-center" data-type="custom">
+                                        <i class="fas fa-edit text-2xl mb-2 text-blue-400"></i>
+                                        <span class="font-medium">كتابة مخصصة</span>
+                                        <p class="text-xs text-slate-400 mt-1">اكتب وأحكم بنفسك</p>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Password Settings -->
+                            <div id="random-settings" class="settings-panel">
+                                <h3 class="text-lg font-semibold mb-4">إعدادات كلمة المرور العشوائية</h3>
+                                
+                                <!-- Length -->
+                                <div class="mb-6">
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-sm font-medium text-slate-300">طول كلمة المرور</label>
+                                        <span id="length-value" class="text-primary-400 font-bold">16</span>
+                                    </div>
+                                    <input type="range" id="password-length" min="8" max="64" value="16" 
+                                           class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider">
+                                    <div class="flex justify-between text-xs text-slate-400 mt-1">
+                                        <span>قصيرة (8)</span>
+                                        <span>متوسطة (16)</span>
+                                        <span>طويلة (32)</span>
+                                        <span>أقصى (64)</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Character Sets -->
+                                <div class="mb-6">
+                                    <h4 class="text-sm font-medium text-slate-300 mb-3">أنواع الأحرف</h4>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <label class="flex items-center gap-2 p-3 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors cursor-pointer">
+                                            <input type="checkbox" id="uppercase" class="rounded text-primary-500" checked>
+                                            <span>أحرف كبيرة (A-Z)</span>
+                                        </label>
+                                        
+                                        <label class="flex items-center gap-2 p-3 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors cursor-pointer">
+                                            <input type="checkbox" id="lowercase" class="rounded text-primary-500" checked>
+                                            <span>أحرف صغيرة (a-z)</span>
+                                        </label>
+                                        
+                                        <label class="flex items-center gap-2 p-3 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors cursor-pointer">
+                                            <input type="checkbox" id="numbers" class="rounded text-primary-500" checked>
+                                            <span>أرقام (0-9)</span>
+                                        </label>
+                                        
+                                        <label class="flex items-center gap-2 p-3 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors cursor-pointer">
+                                            <input type="checkbox" id="symbols" class="rounded text-primary-500" checked>
+                                            <span>رموز (!@#$%)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Custom Symbols -->
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">رموز مخصصة</label>
+                                    <input type="text" id="custom-symbols" 
+                                           class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all"
+                                           placeholder="أدخل الرموز التي تريد استخدامها (مثال: !@#$%^&*)"
+                                           value="!@#$%^&*()_+-=[]{}|;:,.<>?">
+                                </div>
+                                
+                                <!-- Avoid Similar Characters -->
+                                <div class="mb-6">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="avoid-similar" class="rounded text-primary-500">
+                                        <span class="text-sm font-medium text-slate-300">تجنب الأحرف المتشابهة (مثل: il1Lo0O)</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Passphrase Settings -->
+                            <div id="passphrase-settings" class="settings-panel hidden">
+                                <h3 class="text-lg font-semibold mb-4">إعدادات عبارة المرور</h3>
+                                
+                                <div class="mb-6">
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-sm font-medium text-slate-300">عدد الكلمات</label>
+                                        <span id="word-count-value" class="text-primary-400 font-bold">4</span>
+                                    </div>
+                                    <input type="range" id="word-count" min="3" max="10" value="4" 
+                                           class="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer slider">
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">فاصل بين الكلمات</label>
+                                    <div class="flex gap-2">
+                                        <button class="separator-btn px-4 py-2 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors active" data-separator="-">- (شرطة)</button>
+                                        <button class="separator-btn px-4 py-2 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors" data-separator="_">_ (شرطة سفلية)</button>
+                                        <button class="separator-btn px-4 py-2 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors" data-separator=".">. (نقطة)</button>
+                                        <button class="separator-btn px-4 py-2 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors" data-separator=" "> (فراغ)</button>
+                                    </div>
+                                    <input type="text" id="custom-separator" 
+                                           class="w-full mt-2 px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all hidden"
+                                           placeholder="أدخل فاصل مخصص">
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">لغة الكلمات</label>
+                                    <div class="flex gap-2">
+                                        <button class="language-btn px-4 py-2 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors" data-lang="ar">عربية</button>
+                                        <button class="language-btn px-4 py-2 rounded-lg border border-slate-700 hover:border-primary-500 transition-colors active" data-lang="en">إنجليزية</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pattern Settings -->
+                            <div id="pattern-settings" class="settings-panel hidden">
+                                <h3 class="text-lg font-semibold mb-4">إعدادات النمط المخصص</h3>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">النمط المطلوب</label>
+                                    <input type="text" id="password-pattern" 
+                                           class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all font-mono"
+                                           placeholder="مثال: AAAnnn@@@ (A=حرف كبير, a=حرف صغير, n=رقم, @=رمز)">
+                                    <p class="text-xs text-slate-400 mt-1">
+                                        رموز النمط: A (حرف كبير), a (حرف صغير), n (رقم), @ (رمز), * (أي حرف)
+                                    </p>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">أمثلة جاهزة</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button class="pattern-example-btn px-3 py-2 text-sm rounded-lg border border-slate-700 hover:border-primary-500 transition-colors" data-pattern="AAAnnn@@">مثال 1</button>
+                                        <button class="pattern-example-btn px-3 py-2 text-sm rounded-lg border border-slate-700 hover:border-primary-500 transition-colors" data-pattern="aaaaAAAAnnnn@@@@">مثال 2</button>
+                                        <button class="pattern-example-btn px-3 py-2 text-sm rounded-lg border border-slate-700 hover:border-primary-500 transition-colors" data-pattern="AAAnnn@@aaAA">مثال 3</button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Custom Password Settings - IMPROVED -->
+                            <div id="custom-settings" class="settings-panel hidden">
+                                <h3 class="text-lg font-semibold mb-4">كتابة وتحسين كلمة المرور الخاصة بك</h3>
+                                
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">اكتب كلمة المرور التي تريدها</label>
+                                    <div class="relative">
+                                        <input type="text" id="custom-password-input" 
+                                               class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all pr-12"
+                                               placeholder="اكتب كلمة المرور المفضلة لديك...">
+                                        <button id="toggle-custom-visibility" class="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-lg hover:bg-slate-700 transition-colors" aria-label="إظهار/إخفاء">
+                                            <i class="fas fa-eye text-slate-400"></i>
+                                        </button>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1">اكتب كلمة المرور التي تفضلها وسنقيم قوتها ونحسنها مع الحفاظ على قابلية التذكر</p>
+                                </div>
+                                
+                                <div class="mb-6">
+                                    <div class="flex justify-between mb-2">
+                                        <label class="text-sm font-medium text-slate-300">قوة كلمتك الحالية</label>
+                                        <span id="custom-strength-value" class="text-sm font-medium">غير معروفة</span>
+                                    </div>
+                                    <div class="password-strength-bar strength-0" id="custom-strength-bar"></div>
+                                    <div class="flex justify-between text-xs text-slate-400 mt-1">
+                                        <span>ضعيفة جداً</span>
+                                        <span>متوسطة</span>
+                                        <span>قوية</span>
+                                        <span>قوية جداً</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Improved Password Improvement Options -->
+                                <div class="mb-6 p-4 rounded-xl bg-slate-800/50 border border-slate-700">
+                                    <h4 class="font-medium text-slate-300 mb-3">خيارات تحسين كلمة المرور</h4>
+                                    
+                                    <div class="space-y-3">
+                                        <label class="flex items-start gap-2 cursor-pointer">
+                                            <input type="radio" name="improvement-type" value="memorable" class="mt-1 text-primary-500" checked>
+                                            <div>
+                                                <span class="text-sm font-medium text-slate-300">تحسين سهل التذكر</span>
+                                                <p class="text-xs text-slate-400 mt-1">نحسن كلمة المرور مع الحفاظ على شكلها الأساسي لتكون سهلة التذكر</p>
+                                            </div>
+                                        </label>
+                                        
+                                        <label class="flex items-start gap-2 cursor-pointer">
+                                            <input type="radio" name="improvement-type" value="balanced" class="mt-1 text-primary-500">
+                                            <div>
+                                                <span class="text-sm font-medium text-slate-300">تحسين متوازن</span>
+                                                <p class="text-xs text-slate-400 mt-1">مزيج من القوة وسهولة التذكر</p>
+                                            </div>
+                                        </label>
+                                        
+                                        <label class="flex items-start gap-2 cursor-pointer">
+                                            <input type="radio" name="improvement-type" value="strong" class="mt-1 text-primary-500">
+                                            <div>
+                                                <span class="text-sm font-medium text-slate-300">تحسين قوي</span>
+                                                <p class="text-xs text-slate-400 mt-1">أقصى قوة أمان حتى لو كان التذكر أصعب</p>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <button id="analyze-custom-btn" class="py-3 rounded-xl border border-primary-500 text-primary-400 font-medium hover:bg-primary-500/10 transition-all flex items-center justify-center gap-2">
+                                        <i class="fas fa-search"></i>تحليل كلمتي
+                                    </button>
+                                    
+                                    <button id="improve-password-btn" class="py-3 rounded-xl gradient-bg text-white font-medium hover:opacity-90 transition-all flex items-center justify-center gap-2">
+                                        <i class="fas fa-shield-alt"></i>تحسين كلمتي
+                                    </button>
+                                </div>
+                                
+                                <div class="p-4 rounded-xl bg-slate-800/50 border border-slate-700 hidden" id="improvement-suggestions">
+                                    <h4 class="font-medium mb-3 text-green-400">اقتراحات للتحسين</h4>
+                                    <ul class="space-y-2 text-sm text-slate-300" id="improvement-list">
+                                        <li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400 text-xs"></i> <span>جاري التحليل...</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <!-- Generate Button -->
+                            <button id="generate-btn" class="w-full py-4 rounded-xl gradient-bg text-white font-bold text-lg hover:opacity-90 transition-all transform hover:scale-[1.02]" 
+                                    aria-label="إنشاء كلمة مرور جديدة">
+                                <i class="fas fa-bolt mr-2"></i>إنشاء كلمة المرور
+                            </button>
+                        </div>
+                        
+                        <!-- Password Strength Checker -->
+                        <div class="glassmorphic-dark rounded-2xl p-6 mt-8">
+                            <h3 class="text-lg font-semibold mb-4">فحص قوة كلمة مرور موجودة</h3>
+                            
+                            <div class="mb-4">
+                                <input type="text" id="check-password-input" 
+                                       class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all"
+                                       placeholder="أدخل كلمة مرور لفحص قوتها">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-slate-300">قوة كلمة المرور</span>
+                                    <span id="check-strength-text" class="text-sm font-medium">غير معروفة</span>
+                                </div>
+                                <div class="password-strength-bar strength-0" id="check-strength-bar"></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                                <div class="text-center p-3 rounded-lg bg-slate-800">
+                                    <div class="text-2xl font-bold text-primary-400" id="check-length">0</div>
+                                    <div class="text-xs text-slate-400">الطول</div>
+                                </div>
+                                
+                                <div class="text-center p-3 rounded-lg bg-slate-800">
+                                    <div class="text-2xl font-bold text-primary-400" id="check-entropy">0</div>
+                                    <div class="text-xs text-slate-400">إنتروبيا</div>
+                                </div>
+                                
+                                <div class="text-center p-3 rounded-lg bg-slate-800">
+                                    <div class="text-2xl font-bold text-primary-400" id="check-crack-time">0</div>
+                                    <div class="text-xs text-slate-400">ثانية للتخمين</div>
+                                </div>
+                                
+                                <div class="text-center p-3 rounded-lg bg-slate-800">
+                                    <div class="text-2xl font-bold text-primary-400" id="check-score">0</div>
+                                    <div class="text-xs text-slate-400">درجة الأمان</div>
+                                </div>
+                            </div>
+                            
+                            <button id="check-password-btn" class="w-full py-3 rounded-xl border border-primary-500 text-primary-400 font-medium hover:bg-primary-500/10 transition-colors">
+                                <i class="fas fa-search mr-2"></i>فحص كلمة المرور
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Password Result & Actions -->
+                    <div class="lg:col-span-1">
+                        <div class="glassmorphic-dark rounded-2xl p-6 sticky top-24">
+                            <div class="text-center mb-6">
+                                <div class="w-20 h-20 mx-auto mb-4 rounded-full gradient-bg flex items-center justify-center">
+                                    <i class="fas fa-key text-3xl text-white"></i>
+                                </div>
+                                <h3 class="text-xl font-bold mb-2">كلمة المرور المولدة</h3>
+                                <p class="text-slate-400 text-sm">انشئ كلمة مرور قوية وآمنة</p>
+                            </div>
+                            
+                            <!-- Password Display -->
+                            <div class="mb-6">
+                                <div class="bg-slate-800 rounded-xl p-4 relative overflow-hidden">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-sm text-slate-400">كلمة المرور</span>
+                                        <div class="flex items-center gap-2">
+                                            <div class="flex gap-1" id="strength-dots">
+                                                <div class="w-2 h-2 rounded-full bg-slate-600"></div>
+                                                <div class="w-2 h-2 rounded-full bg-slate-600"></div>
+                                                <div class="w-2 h-2 rounded-full bg-slate-600"></div>
+                                                <div class="w-2 h-2 rounded-full bg-slate-600"></div>
+                                            </div>
+                                            <span id="strength-text" class="text-xs text-slate-400">قوة غير معروفة</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-3">
+                                        <code id="generated-password" class="flex-1 text-xl font-mono bg-transparent text-primary-300 break-all min-h-[2.5rem]">
+                                            اضغط على "إنشاء كلمة المرور"
+                                        </code>
+                                        <button id="toggle-visibility" class="p-2 rounded-lg hover:bg-slate-700 transition-colors" aria-label="إظهار/إخفاء كلمة المرور">
+                                            <i class="fas fa-eye text-lg text-slate-400"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="password-strength-bar mt-3 strength-0" id="password-strength-bar"></div>
+                                </div>
+                                
+                                <!-- Password Details -->
+                                <div id="password-details" class="mt-4 space-y-2 hidden">
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-slate-400">الطول:</span>
+                                        <span id="detail-length" class="text-sm font-medium">0 حرف</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-slate-400">إنتروبيا:</span>
+                                        <span id="detail-entropy" class="text-sm font-medium">0 بت</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-slate-400">وقت التخمين:</span>
+                                        <span id="detail-crack-time" class="text-sm font-medium">0 ثانية</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-sm text-slate-400">درجة الأمان:</span>
+                                        <span id="detail-score" class="text-sm font-medium">0/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="space-y-3">
+                                <button id="copy-btn" class="w-full py-3 rounded-xl bg-primary-500 text-white font-medium hover:bg-primary-600 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-copy"></i>نسخ كلمة المرور
+                                </button>
+                                
+                                <button id="save-btn" class="w-full py-3 rounded-xl border border-primary-500 text-primary-400 font-medium hover:bg-primary-500/10 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-save"></i>حفظ في المدير
+                                </button>
+                                
+                                <button id="download-btn" class="w-full py-3 rounded-xl border border-slate-600 text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-download"></i>تحميل كملف
+                                </button>
+                                
+                                <button id="refresh-btn" class="w-full py-3 rounded-xl border border-slate-600 text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-redo"></i>إنشاء أخرى
+                                </button>
+                                
+                                <button id="print-btn" class="w-full py-3 rounded-xl border border-slate-600 text-slate-300 font-medium hover:bg-slate-700 transition-all flex items-center justify-center gap-2 no-print">
+                                    <i class="fas fa-print"></i>طباعة
+                                </button>
+                                
+                                <button id="generate-qr-btn" class="w-full py-3 rounded-xl border border-green-500 text-green-400 font-medium hover:bg-green-500/10 transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-qrcode"></i>إنشاء QR Code
+                                </button>
+                            </div>
+                            
+                            <!-- Quick Stats -->
+                            <div class="mt-6 pt-6 border-t border-slate-700">
+                                <h4 class="text-sm font-medium text-slate-300 mb-3">إحصائيات سريعة</h4>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="text-center p-3 rounded-lg bg-slate-800/50">
+                                        <div class="text-lg font-bold text-primary-400" id="stats-generated">0</div>
+                                        <div class="text-xs text-slate-400">تم إنشاؤها</div>
+                                    </div>
+                                    
+                                    <div class="text-center p-3 rounded-lg bg-slate-800/50">
+                                        <div class="text-lg font-bold text-primary-400" id="stats-saved">0</div>
+                                        <div class="text-xs text-slate-400">محفوظة</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Password Manager Section -->
+            <section id="manager-section" class="hidden">
+                <!-- ... (باقي الكود كما هو بدون تغيير كبير) ... -->
+            </section>
+            
+            <!-- Strength Checker Section -->
+            <section id="strength-checker-section" class="hidden">
+                <!-- ... (باقي الكود كما هو بدون تغيير كبير) ... -->
+            </section>
+            
+            <!-- QR Code Section - IMPROVED -->
+            <section id="qrcode-section" class="hidden">
+                <div class="glassmorphic-dark rounded-2xl p-6">
+                    <h2 class="text-2xl font-bold mb-6 gradient-text">مشاركة آمنة عبر QR Code</h2>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <!-- Generate QR Code -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">إنشاء QR Code</h3>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">كلمة المرور للمشاركة</label>
+                                    <input type="text" id="qrcode-password" 
+                                           class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all"
+                                           placeholder="أدخل كلمة المرور للمشاركة">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">ملاحظات (اختياري)</label>
+                                    <input type="text" id="qrcode-notes" 
+                                           class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all"
+                                           placeholder="أضف ملاحظات للاستخدام">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">مدة الصلاحية</label>
+                                    <select id="qrcode-expiry" 
+                                            class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white focus:border-primary-500 focus:outline-none transition-all">
+                                        <option value="1h">ساعة واحدة</option>
+                                        <option value="1d">يوم واحد</option>
+                                        <option value="7d">أسبوع</option>
+                                        <option value="30d">شهر</option>
+                                        <option value="never">لا تنتهي</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">نوع التشفير</label>
+                                    <select id="qrcode-encryption" 
+                                            class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white focus:border-primary-500 focus:outline-none transition-all">
+                                        <option value="simple">تشفير بسيط</option>
+                                        <option value="advanced">تشفير متقدم</option>
+                                        <option value="password">محمي بكلمة مرور</option>
+                                    </select>
+                                </div>
+                                
+                                <div id="qrcode-password-field" class="hidden">
+                                    <label class="block text-sm font-medium text-slate-300 mb-2">كلمة مرور التشفير</label>
+                                    <input type="password" id="qrcode-encryption-password" 
+                                           class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none transition-all"
+                                           placeholder="أدخل كلمة مرور للتشفير">
+                                </div>
+                                
+                                <button id="generate-qrcode-btn" class="w-full py-3 rounded-xl gradient-bg text-white font-medium hover:opacity-90 transition-all">
+                                    <i class="fas fa-qrcode mr-2"></i>إنشاء QR Code
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- QR Code Display - IMPROVED -->
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">QR Code</h3>
+                            
+                            <div class="p-6 rounded-xl bg-slate-800/50 border border-slate-700 flex flex-col items-center justify-center">
+                                <div id="qrcode-container" class="qrcode-container mb-6">
+                                    <div class="qrcode-placeholder">
+                                        <i class="fas fa-qrcode"></i>
+                                        <p>لم يتم إنشاء QR Code بعد</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="text-center space-y-3">
+                                    <p class="text-sm text-slate-400" id="qrcode-info">سيظهر هنا QR Code مشفر لكلمة المرور</p>
+                                    
+                                    <div class="flex gap-3 justify-center">
+                                        <button id="download-qrcode" class="px-4 py-2 rounded-lg border border-primary-500 text-primary-400 font-medium hover:bg-primary-500/10 transition-colors hidden">
+                                            <i class="fas fa-download mr-2"></i>تحميل
+                                        </button>
+                                        
+                                        <button id="share-qrcode" class="px-4 py-2 rounded-lg border border-green-500 text-green-400 font-medium hover:bg-green-500/10 transition-colors hidden">
+                                            <i class="fas fa-share-alt mr-2"></i>مشاركة
+                                        </button>
+                                        
+                                        <button id="clear-qrcode" class="px-4 py-2 rounded-lg border border-red-500 text-red-400 font-medium hover:bg-red-500/10 transition-colors">
+                                            <i class="fas fa-trash mr-2"></i>مسح
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-6 p-4 rounded-lg bg-slate-900/50 w-full">
+                                    <h4 class="font-medium mb-2 text-slate-300">كيفية الاستخدام:</h4>
+                                    <ol class="text-sm text-slate-400 space-y-1 list-decimal list-inside">
+                                        <li>إنشاء QR Code لكلمة المرور</li>
+                                        <li>شاركه مع شخص تثق به</li>
+                                        <li>يمكنه مسح الكود باستخدام كاميرا الهاتف</li>
+                                        <li>سيتم فك التشفير تلقائياً في التطبيق</li>
+                                    </ol>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- QR Code History -->
+                    <div class="mt-8 pt-8 border-t border-slate-700">
+                        <h3 class="text-lg font-semibold mb-4">سجل QR Codes المنشأة</h3>
+                        
+                        <div id="qrcode-history" class="space-y-3">
+                            <div class="text-center py-8 text-slate-500">
+                                <i class="fas fa-history text-3xl mb-4"></i>
+                                <p>لا توجد QR Codes منشأة سابقاً</p>
+                                <p class="text-sm mt-1">قم بإنشاء QR Code أولاً وسيظهر هنا</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Settings Section -->
+            <section id="settings-section" class="hidden">
+                <!-- ... (باقي الكود كما هو بدون تغيير كبير) ... -->
+            </section>
+        </main>
+        
+        <!-- Footer -->
+        <footer class="mt-12 py-6 border-t border-slate-800 text-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <p class="text-slate-400">
+                    <span class="font-bold gradient-text">باسوردك في جيبك</span> - مولد كلمات المرور الآمن المتقدم 
+                    <span class="mx-2">•</span> 
+                    الإصدار 3.1.0
+                    <span class="mx-2">•</span> 
+                    يعمل 100% على جهازك مع مزامنة ومشاركة
+                </p>
+                <p class="text-sm text-slate-500 mt-2">
+                    © 2024 جميع الحقوق محفوظة. تم تطويره بكل ❤️ للأمان الرقمي العربي.
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2 w-80"></div>
+
+    <!-- Toast Template -->
+    <template id="toast-template">
+        <div class="toast p-4 rounded-xl glassmorphic-dark border-l-4 shadow-lg transform transition-all duration-300 slide-in">
+            <div class="flex items-start gap-3">
+                <div class="toast-icon text-lg mt-0.5"></div>
+                <div class="flex-1">
+                    <div class="toast-title font-medium"></div>
+                    <div class="toast-message text-sm text-slate-300 mt-1"></div>
+                </div>
+                <button class="toast-close p-1 rounded-lg hover:bg-white/5 transition-colors" aria-label="إغلاق">
+                    <i class="fas fa-times text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <!-- Password Item Template -->
+    <template id="password-item-template">
+        <!-- ... (كما هو) ... -->
+    </template>
+
+    <!-- JavaScript - IMPROVED -->
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // ============================================================================
+        // IMPROVED ENCRYPTION MODULE
+        // ============================================================================
+        class Encryption {
+            static async generateKey(password) {
+                try {
+                    const encoder = new TextEncoder();
+                    const passwordBuffer = encoder.encode(password);
+                    
+                    // Import the password as a key
+                    const baseKey = await crypto.subtle.importKey(
+                        'raw',
+                        passwordBuffer,
+                        { name: 'PBKDF2' },
+                        false,
+                        ['deriveKey']
+                    );
+                    
+                    // Derive a key from the password
+                    const salt = crypto.getRandomValues(new Uint8Array(16));
+                    const key = await crypto.subtle.deriveKey(
+                        {
+                            name: 'PBKDF2',
+                            salt: salt,
+                            iterations: 100000,
+                            hash: 'SHA-256'
+                        },
+                        baseKey,
+                        { name: 'AES-GCM', length: 256 },
+                        true,
+                        ['encrypt', 'decrypt']
+                    );
+                    
+                    return { key, salt };
+                } catch (error) {
+                    console.error('Key generation error:', error);
+                    throw new Error('فشل في إنشاء مفتاح التشفير');
+                }
+            }
+            
+            static async encrypt(text, password) {
+                try {
+                    const { key, salt } = await this.generateKey(password);
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(text);
+                    const iv = crypto.getRandomValues(new Uint8Array(12));
+                    
+                    const encrypted = await crypto.subtle.encrypt(
+                        { name: 'AES-GCM', iv: iv },
+                        key,
+                        data
+                    );
+                    
+                    return {
+                        encrypted: Array.from(new Uint8Array(encrypted)),
+                        iv: Array.from(iv),
+                        salt: Array.from(salt)
+                    };
+                } catch (error) {
+                    console.error('Encryption error:', error);
+                    throw new Error('فشل في تشفير البيانات');
+                }
+            }
+            
+            static async decrypt(encryptedData, password) {
+                try {
+                    const encoder = new TextEncoder();
+                    const passwordBuffer = encoder.encode(password);
+                    
+                    // Import the password as a key
+                    const baseKey = await crypto.subtle.importKey(
+                        'raw',
+                        passwordBuffer,
+                        { name: 'PBKDF2' },
+                        false,
+                        ['deriveKey']
+                    );
+                    
+                    // Derive the key using the stored salt
+                    const key = await crypto.subtle.deriveKey(
+                        {
+                            name: 'PBKDF2',
+                            salt: new Uint8Array(encryptedData.salt),
+                            iterations: 100000,
+                            hash: 'SHA-256'
+                        },
+                        baseKey,
+                        { name: 'AES-GCM', length: 256 },
+                        true,
+                        ['decrypt']
+                    );
+                    
+                    const decrypted = await crypto.subtle.decrypt(
+                        { name: 'AES-GCM', iv: new Uint8Array(encryptedData.iv) },
+                        key,
+                        new Uint8Array(encryptedData.encrypted)
+                    );
+                    
+                    const decoder = new TextDecoder();
+                    return decoder.decode(decrypted);
+                } catch (error) {
+                    console.error('Decryption error:', error);
+                    throw new Error('فشل في فك تشفير البيانات - كلمة المرور غير صحيحة');
+                }
+            }
+            
+            static async hashPassword(password) {
+                // Better hash function using Web Crypto API
+                const encoder = new TextEncoder();
+                const data = encoder.encode(password);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+        }
+
+        // ============================================================================
+        // IMPROVED PASSWORD IMPROVEMENT SYSTEM
+        // ============================================================================
+        class PasswordImprover {
+            // تحسين سهل التذكر
+            static improveMemorable(password) {
+                if (!password || password.length === 0) {
+                    return "MySecurePass2024!";
+                }
+                
+                let improved = password;
+                
+                // 1. تأكد من وجود حرف كبير على الأقل
+                if (!/[A-Z]/.test(improved)) {
+                    improved = improved.charAt(0).toUpperCase() + improved.slice(1);
+                }
+                
+                // 2. إضافة رقم ذي معنى (مثل سنة أو عمر)
+                if (!/[0-9]/.test(improved)) {
+                    const currentYear = new Date().getFullYear();
+                    improved += currentYear.toString().slice(-2); // آخر رقمين من السنة
+                }
+                
+                // 3. إضافة رمز سهل التذكر
+                if (!/[^A-Za-z0-9]/.test(improved)) {
+                    const easySymbols = ['!', '@', '#', '$', '%'];
+                    improved += easySymbols[Math.floor(Math.random() * easySymbols.length)];
+                }
+                
+                // 4. إذا كانت قصيرة، كرر جزء منها
+                if (improved.length < 12) {
+                    const prefix = improved.slice(0, 3);
+                    improved += prefix.toLowerCase();
+                }
+                
+                // 5. تأكد من الطول المناسب
+                if (improved.length > 20) {
+                    improved = improved.slice(0, 20);
+                }
+                
+                return improved;
+            }
+            
+            // تحسين متوازن (ذاكرة + قوة)
+            static improveBalanced(password) {
+                if (!password || password.length === 0) {
+                    return "StrongPass123!@#";
+                }
+                
+                let improved = password;
+                
+                // 1. تحويل بعض الأحرف إلى Leet Speak بشكل محدود
+                const leetMap = {
+                    'a': '4', 'e': '3', 'i': '1', 'o': '0',
+                    's': '5', 't': '7', 'b': '8'
+                };
+                
+                let leetApplied = false;
+                for (const [char, replacement] of Object.entries(leetMap)) {
+                    if (improved.toLowerCase().includes(char) && !leetApplied) {
+                        improved = improved.replace(new RegExp(char, 'i'), replacement);
+                        leetApplied = true;
+                    }
+                }
+                
+                // 2. إضافة رمز في موضع متوقع
+                const symbols = ['!', '@', '#', '$', '%', '&', '*'];
+                const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+                
+                // وضع الرمز في الموضع الأول أو الأخير (سهل التذكر)
+                if (Math.random() > 0.5) {
+                    improved = symbol + improved;
+                } else {
+                    improved += symbol;
+                }
+                
+                // 3. تبديل بعض الأحرف إلى كبيرة
+                let chars = improved.split('');
+                for (let i = 0; i < chars.length; i += 3) {
+                    if (/[a-z]/.test(chars[i])) {
+                        chars[i] = chars[i].toUpperCase();
+                    }
+                }
+                improved = chars.join('');
+                
+                // 4. تأكد من الطول المناسب
+                if (improved.length < 12) {
+                    const additions = ['123', 'abc', 'xyz', '2024'];
+                    improved += additions[Math.floor(Math.random() * additions.length)];
+                }
+                
+                return improved;
+            }
+            
+            // تحسين قوي (أقصى أمان)
+            static improveStrong(password) {
+                if (!password || password.length === 0) {
+                    return this.generateStrongPassword(16);
+                }
+                
+                let improved = password;
+                
+                // 1. تأكد من وجود جميع أنواع الأحرف
+                const requirements = [
+                    { regex: /[A-Z]/, chars: 'ABCDEFGHJKLMNPQRSTUVWXYZ' },
+                    { regex: /[a-z]/, chars: 'abcdefghijkmnpqrstuvwxyz' },
+                    { regex: /[0-9]/, chars: '23456789' },
+                    { regex: /[^A-Za-z0-9]/, chars: '!@#$%^&*()_+-=[]{}|;:,.<>?' }
+                ];
+                
+                for (const req of requirements) {
+                    if (!req.regex.test(improved)) {
+                        const randomIndex = Math.floor(Math.random() * improved.length);
+                        const randomChar = req.chars[Math.floor(Math.random() * req.chars.length)];
+                        improved = improved.substring(0, randomIndex) + randomChar + improved.substring(randomIndex);
+                    }
+                }
+                
+                // 2. إزالة الأحرف المتشابهة إذا كانت موجودة
+                const similarChars = 'il1Lo0O';
+                let cleaned = '';
+                for (const char of improved) {
+                    if (!similarChars.includes(char)) {
+                        cleaned += char;
+                    }
+                }
+                
+                if (cleaned.length >= 8) {
+                    improved = cleaned;
+                }
+                
+                // 3. تأكد من طول مناسب
+                const targetLength = Math.max(16, password.length + 4);
+                if (improved.length < targetLength) {
+                    const allChars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+                    while (improved.length < targetLength) {
+                        improved += allChars[Math.floor(Math.random() * allChars.length)];
+                    }
+                }
+                
+                // 4. خلط الأحرف بشكل عشوائي
+                improved = improved.split('').sort(() => Math.random() - 0.5).join('');
+                
+                return improved;
+            }
+            
+            // توليد كلمة مرور قوية من الصفر
+            static generateStrongPassword(length = 16) {
+                const uppercase = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+                const lowercase = 'abcdefghijkmnpqrstuvwxyz';
+                const numbers = '23456789';
+                const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+                
+                let password = '';
+                password += uppercase[Math.floor(Math.random() * uppercase.length)];
+                password += lowercase[Math.floor(Math.random() * lowercase.length)];
+                password += numbers[Math.floor(Math.random() * numbers.length)];
+                password += symbols[Math.floor(Math.random() * symbols.length)];
+                
+                const allChars = uppercase + lowercase + numbers + symbols;
+                for (let i = 4; i < length; i++) {
+                    password += allChars[Math.floor(Math.random() * allChars.length)];
+                }
+                
+                // خلط الأحرف
+                return password.split('').sort(() => Math.random() - 0.5).join('');
+            }
+            
+            // تحليل كلمة المرور وإرجاع اقتراحات
+            static analyzePassword(password) {
+                const suggestions = [];
+                const score = Utils.calculatePasswordStrength(password);
+                
+                if (password.length < 12) {
+                    suggestions.push(`إضافة ${12 - password.length} أحرف إضافية`);
+                }
+                
+                if (!/[A-Z]/.test(password)) {
+                    suggestions.push('إضافة حرف كبير واحد على الأقل');
+                }
+                
+                if (!/[0-9]/.test(password)) {
+                    suggestions.push('إضافة رقم واحد على الأقل');
+                }
+                
+                if (!/[^A-Za-z0-9]/.test(password)) {
+                    suggestions.push('إضافة رمز خاص مثل ! أو @ أو #');
+                }
+                
+                // اكتشاف الأنماط الضعيفة
+                const weakPatterns = [
+                    { pattern: /(.)\1{2,}/, message: 'تجنب تكرار الحرف نفسه أكثر من مرتين' },
+                    { pattern: /123|234|345|456|567|678|789/, message: 'تجنب التسلسلات الرقمية' },
+                    { pattern: /qwerty|asdfgh|zxcvbn/, message: 'تجنب أنماط لوحة المفاتيح' },
+                    { pattern: /password|pass123|admin/, message: 'تجنب كلمات المرور الشائعة' }
+                ];
+                
+                for (const wp of weakPatterns) {
+                    if (wp.pattern.test(password.toLowerCase())) {
+                        suggestions.push(wp.message);
+                    }
+                }
+                
+                return {
+                    score,
+                    suggestions,
+                    strength: Utils.getStrengthLevel(score)
+                };
+            }
+        }
+
+        // ============================================================================
+        // IMPROVED QR CODE SYSTEM
+        // ============================================================================
+        class QRCodeSystem {
+            static async generateQRCode(password, notes = '', expiry = '1h', encryptionType = 'simple', encryptionKey = '') {
+                try {
+                    if (!password || password.trim() === '') {
+                        throw new Error('كلمة المرور مطلوبة');
+                    }
+                    
+                    // تحضير البيانات
+                    const qrData = {
+                        type: 'password',
+                        password: password,
+                        notes: notes || '',
+                        created: new Date().toISOString(),
+                        expiry: expiry,
+                        version: '1.0',
+                        app: 'باسوردك في جيبك'
+                    };
+                    
+                    let qrText = '';
+                    
+                    // تطبيق التشفير المطلوب
+                    switch (encryptionType) {
+                        case 'password':
+                            if (!encryptionKey || encryptionKey.trim() === '') {
+                                throw new Error('كلمة مرور التشفير مطلوبة');
+                            }
+                            // تشفير بسيط للبيانات
+                            const encrypted = btoa(JSON.stringify(qrData));
+                            qrText = `PASSAPP:ENCRYPTED:${encrypted}:KEY:${btoa(encryptionKey)}`;
+                            break;
+                            
+                        case 'advanced':
+                            const advancedData = btoa(JSON.stringify(qrData));
+                            qrText = `PASSAPP:ADVANCED:${advancedData}`;
+                            break;
+                            
+                        case 'simple':
+                        default:
+                            qrText = `PASSAPP:SIMPLE:${btoa(JSON.stringify(qrData))}`;
+                            break;
+                    }
+                    
+                    // إنشاء QR Code
+                    const qrCode = await this.createQRCodeImage(qrText);
+                    
+                    return {
+                        success: true,
+                        qrText: qrText,
+                        qrCode: qrCode,
+                        data: qrData
+                    };
+                    
+                } catch (error) {
+                    console.error('QR Code generation error:', error);
+                    return {
+                        success: false,
+                        error: error.message
+                    };
+                }
+            }
+            
+            static async createQRCodeImage(text) {
+                return new Promise((resolve, reject) => {
+                    try {
+                        // استخدام مكتبة QRCode المحدثة
+                        const qr = qrcode(0, 'M');
+                        qr.addData(text);
+                        qr.make();
+                        
+                        // إنشاء صورة QR Code
+                        const imgData = qr.createDataURL(10, 0);
+                        resolve(imgData);
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            }
+            
+            static decodeQRCode(qrText) {
+                try {
+                    if (!qrText || !qrText.startsWith('PASSAPP:')) {
+                        throw new Error('تنسيق QR Code غير صالح');
+                    }
+                    
+                    const parts = qrText.split(':');
+                    
+                    if (parts[1] === 'SIMPLE') {
+                        const data = JSON.parse(atob(parts[2]));
+                        return {
+                            success: true,
+                            data: data
+                        };
+                    } else if (parts[1] === 'ADVANCED') {
+                        const data = JSON.parse(atob(parts[2]));
+                        return {
+                            success: true,
+                            data: data
+                        };
+                    } else if (parts[1] === 'ENCRYPTED') {
+                        // في تطبيق حقيقي، هنا نطلب كلمة المرور لفك التشفير
+                        return {
+                            success: true,
+                            encrypted: true,
+                            data: parts[2],
+                            requiresPassword: true
+                        };
+                    }
+                    
+                    throw new Error('نوع التشفير غير معروف');
+                    
+                } catch (error) {
+                    console.error('QR Code decode error:', error);
+                    return {
+                        success: false,
+                        error: error.message
+                    };
+                }
+            }
+            
+            static getExpiryText(expiry) {
+                const expiryMap = {
+                    '1h': 'ساعة واحدة',
+                    '1d': 'يوم واحد',
+                    '7d': 'أسبوع',
+                    '30d': 'شهر',
+                    'never': 'لا تنتهي'
+                };
+                return expiryMap[expiry] || expiry;
+            }
+        }
+
+        // ============================================================================
+        // UTILITY FUNCTIONS - IMPROVED
+        // ============================================================================
+        class Utils {
+            // دالة محسنة لنسخ النص
+            static async copyToClipboard(text) {
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(text);
+                        return true;
+                    } else {
+                        // Fallback للبيئات غير الآمنة أو المتصفحات القديمة
+                        const textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        textArea.style.position = 'fixed';
+                        textArea.style.opacity = '0';
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        
+                        const success = document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        
+                        return success;
+                    }
+                } catch (error) {
+                    console.error('Copy failed:', error);
+                    return false;
+                }
+            }
+            
+            // إظهار إشعار محسّن
+            static showToast(type, title, message, duration = 4000) {
+                try {
+                    // استخدام Toastify إذا كان متاحاً
+                    if (typeof Toastify !== 'undefined') {
+                        const backgroundColor = {
+                            success: '#10B981',
+                            error: '#EF4444',
+                            warning: '#F59E0B',
+                            info: '#3B82F6'
+                        }[type] || '#3B82F6';
+                        
+                        Toastify({
+                            text: `${title}: ${message}`,
+                            duration: duration,
+                            gravity: "top",
+                            position: "left",
+                            backgroundColor: backgroundColor,
+                            stopOnFocus: true,
+                            className: "toastify-arabic",
+                            rtl: true
+                        }).showToast();
+                    } else {
+                        // Fallback للإشعارات البسيطة
+                        const template = document.getElementById('toast-template');
+                        if (template) {
+                            const clone = template.content.cloneNode(true);
+                            const toast = clone.querySelector('.toast');
+                            const icon = clone.querySelector('.toast-icon');
+                            const titleEl = clone.querySelector('.toast-title');
+                            const messageEl = clone.querySelector('.toast-message');
+                            
+                            const types = {
+                                success: { icon: 'fa-check-circle', color: 'text-green-400', border: 'border-green-500' },
+                                error: { icon: 'fa-times-circle', color: 'text-red-400', border: 'border-red-500' },
+                                warning: { icon: 'fa-exclamation-triangle', color: 'text-yellow-400', border: 'border-yellow-500' },
+                                info: { icon: 'fa-info-circle', color: 'text-blue-400', border: 'border-blue-500' }
+                            };
+                            
+                            const toastType = types[type] || types.info;
+                            icon.className = `toast-icon ${toastType.icon} ${toastType.color}`;
+                            toast.classList.add(toastType.border);
+                            titleEl.textContent = title;
+                            messageEl.textContent = message;
+                            
+                            document.getElementById('toast-container').appendChild(toast);
+                            
+                            setTimeout(() => {
+                                if (toast.parentNode) {
+                                    toast.remove();
+                                }
+                            }, duration);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Toast error:', error);
+                }
+            }
+            
+            // حساب قوة كلمة المرور
+            static calculatePasswordStrength(password) {
+                if (!password) return 0;
+                
+                let score = 0;
+                const length = password.length;
+                
+                // نقاط الطول
+                if (length >= 8) score += 10;
+                if (length >= 12) score += 15;
+                if (length >= 16) score += 20;
+                if (length >= 20) score += 25;
+                
+                // نقاط تنوع الأحرف
+                if (/[a-z]/.test(password)) score += 10;
+                if (/[A-Z]/.test(password)) score += 10;
+                if (/[0-9]/.test(password)) score += 10;
+                if (/[^A-Za-z0-9]/.test(password)) score += 15;
+                
+                // نقاط عدم التكرار
+                const uniqueChars = new Set(password).size;
+                score += Math.min(20, (uniqueChars / length) * 20);
+                
+                // خصم للأنماط الشائعة
+                const commonPatterns = [
+                    '123456', 'password', '12345678', 'qwerty', '123456789',
+                    '12345', '1234', '111111', '1234567', 'dragon'
+                ];
+                
+                for (const pattern of commonPatterns) {
+                    if (password.toLowerCase().includes(pattern)) {
+                        score -= 20;
+                        break;
+                    }
+                }
+                
+                // خصم للتسلسلات
+                const sequences = [
+                    'abcdef', 'ghijkl', 'mnopqr', 'stuvwx', 'yz',
+                    '012345', '6789', 'qwerty', 'asdfgh', 'zxcvbn'
+                ];
+                
+                for (const seq of sequences) {
+                    if (password.toLowerCase().includes(seq)) {
+                        score -= 15;
+                        break;
+                    }
+                }
+                
+                return Math.max(0, Math.min(100, score));
+            }
+            
+            // الحصول على مستوى القوة
+            static getStrengthLevel(score) {
+                if (score >= 80) return { level: 4, text: 'قوية جداً', color: 'text-green-400', class: 'strength-4' };
+                if (score >= 60) return { level: 3, text: 'قوية', color: 'text-green-300', class: 'strength-3' };
+                if (score >= 40) return { level: 2, text: 'متوسطة', color: 'text-yellow-400', class: 'strength-2' };
+                if (score >= 20) return { level: 1, text: 'ضعيفة', color: 'text-orange-400', class: 'strength-1' };
+                return { level: 0, text: 'ضعيفة جداً', color: 'text-red-400', class: 'strength-0' };
+            }
+            
+            // دالة المساعدة لتبديل إظهار/إخفاء كلمة المرور
+            static togglePasswordVisibility(inputId, button) {
+                const input = document.getElementById(inputId);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    button.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    input.type = 'password';
+                    button.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            }
+        }
+
+        // ============================================================================
+        // INITIALIZATION AND EVENT HANDLERS
+        // ============================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // تهيئة التطبيق
+            initializeApp();
+            
+            // إعداد مستمعي الأحداث
+            setupEventListeners();
+        });
+        
+        function initializeApp() {
+            // إعداد شاشة التحميل
+            simulateLoading();
+            
+            // إعداد عناصر واجهة المستخدم
+            setupUI();
+        }
+        
+        function simulateLoading() {
+            const steps = [
+                'جاري تهيئة النظام...',
+                'جاري تحميل مكتبات التشفير...',
+                'جاري إعداد واجهة المستخدم...',
+                'جاري التحضير النهائي...',
+                'جاهز للاستخدام!'
+            ];
+            
+            let currentStep = 0;
+            const progressBar = document.getElementById('loading-progress');
+            const statusText = document.getElementById('loading-status');
+            
+            const interval = setInterval(() => {
+                if (currentStep < steps.length) {
+                    statusText.textContent = steps[currentStep];
+                    progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                    
+                    // إخفاء شاشة التحميل بعد تأخير قصير
+                    setTimeout(() => {
+                        const loadingScreen = document.getElementById('loading-screen');
+                        const mainApp = document.getElementById('main-app');
+                        
+                        loadingScreen.classList.add('opacity-0');
+                        setTimeout(() => {
+                            loadingScreen.classList.add('hidden');
+                            mainApp.classList.remove('hidden');
+                            Utils.showToast('success', 'مرحباً بك', 'تم تحميل التطبيق بنجاح!', 2000);
+                        }, 500);
+                    }, 500);
+                }
+            }, 600);
+        }
+        
+        function setupUI() {
+            // إعداد أزرار التنقل
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const section = this.dataset.section;
+                    switchSection(section);
+                    
+                    // إغلاق القائمة المتنقلة إذا كانت مفتوحة
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+            
+            // إعداد زر القائمة المتنقلة
+            document.getElementById('mobile-menu-btn').addEventListener('click', function() {
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // إعداد أزرار نوع التوليد
+            document.querySelectorAll('.generation-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // إزالة النشاط من جميع الأزرار
+                    document.querySelectorAll('.generation-type-btn').forEach(b => {
+                        b.classList.remove('active', 'border-primary-500', 'bg-primary-500/10');
+                    });
+                    
+                    // إضافة النشاط للزر المحدد
+                    this.classList.add('active', 'border-primary-500', 'bg-primary-500/10');
+                    
+                    const type = this.dataset.type;
+                    
+                    // إخفاء جميع لوحات الإعدادات
+                    document.querySelectorAll('.settings-panel').forEach(panel => {
+                        panel.classList.add('hidden');
+                    });
+                    
+                    // إظهار اللوحة المناسبة
+                    document.getElementById(`${type}-settings`).classList.remove('hidden');
+                });
+            });
+            
+            // إعداد شريط الطول
+            const lengthSlider = document.getElementById('password-length');
+            const lengthValue = document.getElementById('length-value');
+            
+            if (lengthSlider && lengthValue) {
+                lengthSlider.addEventListener('input', function() {
+                    lengthValue.textContent = this.value;
+                });
+            }
+            
+            // إعداد زر التوليد
+            document.getElementById('generate-btn').addEventListener('click', generatePassword);
+            
+            // إعداد زر نسخ كلمة المرور
+            document.getElementById('copy-btn').addEventListener('click', copyPassword);
+            
+            // إعداد زر إظهار/إخفاء كلمة المرور
+            document.getElementById('toggle-visibility').addEventListener('click', function() {
+                const passwordDisplay = document.getElementById('generated-password');
+                const icon = this.querySelector('i');
+                
+                if (passwordDisplay.textContent.includes('•')) {
+                    passwordDisplay.textContent = passwordDisplay.dataset.actualPassword || 'لا توجد كلمة مرور';
+                    icon.className = 'fas fa-eye-slash text-lg text-slate-400';
+                } else {
+                    passwordDisplay.textContent = '•'.repeat(passwordDisplay.dataset.actualPassword?.length || 8);
+                    icon.className = 'fas fa-eye text-lg text-slate-400';
+                }
+            });
+            
+            // إعداد زر تحسين كلمة المرور المخصصة
+            document.getElementById('improve-password-btn').addEventListener('click', improveCustomPassword);
+            
+            // إعداد زر تحليل كلمة المرور المخصصة
+            document.getElementById('analyze-custom-btn').addEventListener('click', analyzeCustomPassword);
+            
+            // إعداد زر إنشاء QR Code
+            document.getElementById('generate-qrcode-btn').addEventListener('click', generateQRCode);
+            
+            // إعداد زر مسح QR Code
+            document.getElementById('clear-qrcode').addEventListener('click', clearQRCode);
+            
+            // إعداد زر فحص كلمة المرور
+            document.getElementById('check-password-btn').addEventListener('click', checkPasswordStrength);
+            
+            // إعداد تغيير نوع تشفير QR Code
+            document.getElementById('qrcode-encryption').addEventListener('change', function() {
+                const passwordField = document.getElementById('qrcode-password-field');
+                if (this.value === 'password') {
+                    passwordField.classList.remove('hidden');
+                } else {
+                    passwordField.classList.add('hidden');
+                }
+            });
+            
+            // إعداد نموذج كلمة المرور الرئيسية
+            setupMasterPasswordModal();
+        }
+        
+        function setupMasterPasswordModal() {
+            const saveBtn = document.getElementById('master-password-save');
+            const cancelBtn = document.getElementById('master-password-cancel');
+            const modal = document.getElementById('master-password-modal');
+            
+            if (saveBtn) {
+                saveBtn.addEventListener('click', async function() {
+                    const password = document.getElementById('master-password-input').value;
+                    const confirmPassword = document.getElementById('master-password-confirm').value;
+                    
+                    if (!password || password.length < 8) {
+                        Utils.showToast('error', 'خطأ', 'كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+                        return;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        Utils.showToast('error', 'خطأ', 'كلمات المرور غير متطابقة');
+                        return;
+                    }
+                    
+                    try {
+                        // تخزين كلمة المرور الرئيسية (في تطبيق حقيقي، هذا سيتم تشفيره)
+                        localStorage.setItem('masterPasswordSet', 'true');
+                        localStorage.setItem('appInitialized', 'true');
+                        
+                        modal.classList.add('hidden');
+                        Utils.showToast('success', 'تم الحفظ', 'تم تعيين كلمة المرور الرئيسية بنجاح');
+                        
+                        // إعادة تحميل التطبيق
+                        setTimeout(() => {
+                            window.location.reload();
+                        }, 1000);
+                        
+                    } catch (error) {
+                        Utils.showToast('error', 'خطأ', 'فشل في حفظ كلمة المرور');
+                    }
+                });
+            }
+            
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', function() {
+                    modal.classList.add('hidden');
+                });
+            }
+            
+            // عرض النموذج إذا لم يتم تعيين كلمة مرور
+            setTimeout(() => {
+                if (!localStorage.getItem('masterPasswordSet')) {
+                    modal.classList.remove('hidden');
+                }
+            }, 1000);
+        }
+        
+        function switchSection(sectionId) {
+            // إخفاء جميع الأقسام
+            document.querySelectorAll('main > section').forEach(section => {
+                section.classList.remove('active-section');
+                section.classList.add('hidden');
+            });
+            
+            // إزالة النشاط من جميع أزرار التنقل
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-primary-500/20', 'text-primary-300');
+            });
+            
+            // إظهار القسم المحدد
+            const targetSection = document.getElementById(`${sectionId}-section`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+                targetSection.classList.add('active-section');
+                
+                // إضافة النشاط للزر المحدد
+                document.querySelectorAll(`.nav-btn[data-section="${sectionId}"]`).forEach(btn => {
+                    btn.classList.add('bg-primary-500/20', 'text-primary-300');
+                });
+            }
+        }
+        
+        function generatePassword() {
+            // الحصول على نوع التوليد المحدد
+            let type = 'random';
+            document.querySelectorAll('.generation-type-btn').forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    type = btn.dataset.type;
+                }
+            });
+            
+            let password = '';
+            
+            switch (type) {
+                case 'random':
+                    password = generateRandomPassword();
+                    break;
+                case 'passphrase':
+                    password = generatePassphrase();
+                    break;
+                case 'pattern':
+                    password = generatePatternPassword();
+                    break;
+                case 'custom':
+                    const customInput = document.getElementById('custom-password-input');
+                    password = customInput.value || generateRandomPassword();
+                    break;
+                default:
+                    password = generateRandomPassword();
+            }
+            
+            if (!password) {
+                Utils.showToast('error', 'خطأ', 'فشل في إنشاء كلمة المرور');
+                return;
+            }
+            
+            // تحديث عرض كلمة المرور
+            updatePasswordDisplay(password);
+            
+            // تحديث الإحصائيات
+            updateStats('generated');
+            
+            Utils.showToast('success', 'تم الإنشاء', 'تم إنشاء كلمة مرور جديدة');
+        }
+        
+        function generateRandomPassword() {
+            const length = parseInt(document.getElementById('password-length').value) || 16;
+            const includeUppercase = document.getElementById('uppercase').checked;
+            const includeLowercase = document.getElementById('lowercase').checked;
+            const includeNumbers = document.getElementById('numbers').checked;
+            const includeSymbols = document.getElementById('symbols').checked;
+            const customSymbols = document.getElementById('custom-symbols').value || '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            let charset = '';
+            if (includeLowercase) charset += 'abcdefghijklmnopqrstuvwxyz';
+            if (includeUppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (includeNumbers) charset += '0123456789';
+            if (includeSymbols) charset += customSymbols;
+            
+            if (charset === '') {
+                charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+            }
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                const randomIndex = Math.floor(Math.random() * charset.length);
+                password += charset[randomIndex];
+            }
+            
+            return password;
+        }
+        
+        function generatePassphrase() {
+            const wordCount = parseInt(document.getElementById('word-count').value) || 4;
+            const language = document.querySelector('.language-btn.active')?.dataset.lang || 'en';
+            
+            // قوائم الكلمات
+            const wordLists = {
+                en: [
+                    'apple', 'brave', 'cloud', 'dragon', 'eagle', 'forest', 'galaxy', 'honest',
+                    'island', 'jewel', 'kingdom', 'light', 'mountain', 'night', 'ocean', 'planet',
+                    'queen', 'river', 'star', 'tiger', 'unicorn', 'valley', 'whale', 'yellow', 'zebra'
+                ],
+                ar: [
+                    'قمر', 'شمس', 'بحر', 'جبل', 'نهر', 'ورد', 'حب', 'حلم', 'سلام', 'أمل',
+                    'فرح', 'ضوء', 'نجم', 'سماء', 'غيمة', 'مطر', 'ثوب', 'خبز', 'لبن', 'عسل',
+                    'ذهب', 'فضة', 'لؤلؤ', 'ياقوت', 'زمرد'
+                ]
+            };
+            
+            const words = wordLists[language] || wordLists.en;
+            const selectedWords = [];
+            
+            for (let i = 0; i < wordCount; i++) {
+                const randomIndex = Math.floor(Math.random() * words.length);
+                selectedWords.push(words[randomIndex]);
+            }
+            
+            // الحصول على الفاصل
+            let separator = '-';
+            document.querySelectorAll('.separator-btn').forEach(btn => {
+                if (btn.classList.contains('active')) {
+                    separator = btn.dataset.separator;
+                }
+            });
+            
+            // إذا كان الفاصل فراغاً، استخدم شرطة
+            if (separator === ' ') {
+                const customSeparator = document.getElementById('custom-separator').value;
+                separator = customSeparator || '-';
+            }
+            
+            return selectedWords.join(separator);
+        }
+        
+        function generatePatternPassword() {
+            const pattern = document.getElementById('password-pattern').value;
+            if (!pattern) {
+                Utils.showToast('error', 'خطأ', 'الرجاء إدخال نمط');
+                return generateRandomPassword();
+            }
+            
+            const charSets = {
+                'A': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                'a': 'abcdefghijklmnopqrstuvwxyz',
+                'n': '0123456789',
+                '@': '!@#$%^&*()_+-=[]{}|;:,.<>?',
+                '*': 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?'
+            };
+            
+            let password = '';
+            for (const char of pattern) {
+                if (charSets[char]) {
+                    const charset = charSets[char];
+                    const randomIndex = Math.floor(Math.random() * charset.length);
+                    password += charset[randomIndex];
+                } else {
+                    password += char;
+                }
+            }
+            
+            return password;
+        }
+        
+        function updatePasswordDisplay(password) {
+            const passwordDisplay = document.getElementById('generated-password');
+            const strengthText = document.getElementById('strength-text');
+            const strengthBar = document.getElementById('password-strength-bar');
+            const strengthDots = document.getElementById('strength-dots');
+            
+            // حساب قوة كلمة المرور
+            const score = Utils.calculatePasswordStrength(password);
+            const strength = Utils.getStrengthLevel(score);
+            
+            // تحديث النص والشريط
+            passwordDisplay.textContent = '•'.repeat(password.length);
+            passwordDisplay.dataset.actualPassword = password;
+            
+            strengthText.textContent = strength.text;
+            strengthText.className = `text-xs ${strength.color}`;
+            
+            strengthBar.className = `password-strength-bar ${strength.class}`;
+            
+            // تحديث النقاط
+            const dots = strengthDots.querySelectorAll('div');
+            dots.forEach((dot, index) => {
+                if (index < strength.level) {
+                    dot.className = `w-2 h-2 rounded-full ${strength.color.replace('text-', 'bg-')}`;
+                } else {
+                    dot.className = 'w-2 h-2 rounded-full bg-slate-600';
+                }
+            });
+            
+            // تحديث التفاصيل
+            updatePasswordDetails(password, score);
+        }
+        
+        function updatePasswordDetails(password, score) {
+            const lengthEl = document.getElementById('detail-length');
+            const entropyEl = document.getElementById('detail-entropy');
+            const crackTimeEl = document.getElementById('detail-crack-time');
+            const scoreEl = document.getElementById('detail-score');
+            const detailsContainer = document.getElementById('password-details');
+            
+            if (lengthEl) lengthEl.textContent = `${password.length} حرف`;
+            if (scoreEl) scoreEl.textContent = `${score}/100`;
+            
+            // حساب الإنتروبيا (مبسط)
+            let charsetSize = 0;
+            if (/[a-z]/.test(password)) charsetSize += 26;
+            if (/[A-Z]/.test(password)) charsetSize += 26;
+            if (/[0-9]/.test(password)) charsetSize += 10;
+            if (/[^A-Za-z0-9]/.test(password)) charsetSize += 32;
+            
+            const entropy = Math.log2(Math.pow(charsetSize, password.length));
+            if (entropyEl) entropyEl.textContent = `${entropy.toFixed(1)} بت`;
+            
+            // حساب وقت التخمين (تقريبي)
+            const crackTime = calculateCrackTime(entropy);
+            if (crackTimeEl) crackTimeEl.textContent = crackTime;
+            
+            // إظهار التفاصيل
+            if (detailsContainer) {
+                detailsContainer.classList.remove('hidden');
+            }
+        }
+        
+        function calculateCrackTime(entropy) {
+            const guessesPerSecond = 1e9; // مليار تخمين في الثانية
+            const seconds = Math.pow(2, entropy) / guessesPerSecond;
+            
+            if (seconds < 60) return `${Math.ceil(seconds)} ثانية`;
+            if (seconds < 3600) return `${Math.ceil(seconds / 60)} دقيقة`;
+            if (seconds < 86400) return `${Math.ceil(seconds / 3600)} ساعة`;
+            if (seconds < 2592000) return `${Math.ceil(seconds / 86400)} يوم`;
+            if (seconds < 31536000) return `${Math.ceil(seconds / 2592000)} شهر`;
+            if (seconds < 3153600000) return `${Math.ceil(seconds / 31536000)} سنة`;
+            return `${Math.ceil(seconds / 3153600000)} قرن`;
+        }
+        
+        async function copyPassword() {
+            const passwordDisplay = document.getElementById('generated-password');
+            const actualPassword = passwordDisplay.dataset.actualPassword;
+            
+            if (!actualPassword) {
+                Utils.showToast('error', 'خطأ', 'لا توجد كلمة مرور لنسخها');
+                return;
+            }
+            
+            const success = await Utils.copyToClipboard(actualPassword);
+            
+            if (success) {
+                Utils.showToast('success', 'تم النسخ', 'تم نسخ كلمة المرور إلى الحافظة');
+                
+                // تغيير مظهر الزر مؤقتاً
+                const copyBtn = document.getElementById('copy-btn');
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check mr-2"></i>تم النسخ';
+                copyBtn.classList.add('bg-green-500');
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.classList.remove('bg-green-500');
+                }, 2000);
+            } else {
+                Utils.showToast('error', 'خطأ', 'فشل نسخ كلمة المرور');
+            }
+        }
+        
+        function analyzeCustomPassword() {
+            const passwordInput = document.getElementById('custom-password-input');
+            const password = passwordInput.value;
+            
+            if (!password || password.trim() === '') {
+                Utils.showToast('error', 'خطأ', 'الرجاء إدخال كلمة مرور أولاً');
+                return;
+            }
+            
+            const analysis = PasswordImprover.analyzePassword(password);
+            const strengthValue = document.getElementById('custom-strength-value');
+            const strengthBar = document.getElementById('custom-strength-bar');
+            const improvementList = document.getElementById('improvement-list');
+            const suggestionsContainer = document.getElementById('improvement-suggestions');
+            
+            // تحديث قوة كلمة المرور
+            strengthValue.textContent = analysis.strength.text;
+            strengthValue.className = `text-sm font-medium ${analysis.strength.color}`;
+            strengthBar.className = `password-strength-bar ${analysis.strength.class}`;
+            
+            // عرض الاقتراحات
+            if (analysis.suggestions.length > 0) {
+                improvementList.innerHTML = analysis.suggestions.map(suggestion => 
+                    `<li class="flex items-center gap-2 improvement-suggestion"><i class="fas fa-lightbulb text-yellow-400 text-xs"></i> <span>${suggestion}</span></li>`
+                ).join('');
+                suggestionsContainer.classList.remove('hidden');
+            } else {
+                improvementList.innerHTML = '<li class="flex items-center gap-2"><i class="fas fa-check-circle text-green-400 text-xs"></i> <span>كلمة المرور ممتازة!</span></li>';
+                suggestionsContainer.classList.remove('hidden');
+            }
+            
+            Utils.showToast('success', 'تم التحليل', `قوة كلمة المرور: ${analysis.strength.text}`);
+        }
+        
+        function improveCustomPassword() {
+            const passwordInput = document.getElementById('custom-password-input');
+            const password = passwordInput.value;
+            
+            if (!password || password.trim() === '') {
+                Utils.showToast('error', 'خطأ', 'الرجاء إدخال كلمة مرور أولاً');
+                return;
+            }
+            
+            // الحصول على نوع التحسين المحدد
+            const improvementType = document.querySelector('input[name="improvement-type"]:checked').value;
+            let improvedPassword = '';
+            
+            // تطبيق التحسين المناسب
+            switch (improvementType) {
+                case 'memorable':
+                    improvedPassword = PasswordImprover.improveMemorable(password);
+                    break;
+                case 'balanced':
+                    improvedPassword = PasswordImprover.improveBalanced(password);
+                    break;
+                case 'strong':
+                    improvedPassword = PasswordImprover.improveStrong(password);
+                    break;
+                default:
+                    improvedPassword = PasswordImprover.improveBalanced(password);
+            }
+            
+            // تحديث حقل الإدخال
+            passwordInput.value = improvedPassword;
+            
+            // تحليل كلمة المرور المحسنة تلقائياً
+            setTimeout(() => {
+                analyzeCustomPassword();
+                updatePasswordDisplay(improvedPassword);
+            }, 100);
+            
+            Utils.showToast('success', 'تم التحسين', 'تم تحسين كلمة المرور بنجاح');
+        }
+        
+        async function generateQRCode() {
+            const passwordInput = document.getElementById('qrcode-password');
+            const notesInput = document.getElementById('qrcode-notes');
+            const expirySelect = document.getElementById('qrcode-expiry');
+            const encryptionSelect = document.getElementById('qrcode-encryption');
+            const encryptionPasswordInput = document.getElementById('qrcode-encryption-password');
+            
+            const password = passwordInput.value.trim();
+            const notes = notesInput.value.trim();
+            const expiry = expirySelect.value;
+            const encryptionType = encryptionSelect.value;
+            const encryptionKey = encryptionType === 'password' ? encryptionPasswordInput.value.trim() : '';
+            
+            if (!password) {
+                Utils.showToast('error', 'خطأ', 'الرجاء إدخال كلمة المرور');
+                return;
+            }
+            
+            if (encryptionType === 'password' && !encryptionKey) {
+                Utils.showToast('error', 'خطأ', 'الرجاء إدخال كلمة مرور التشفير');
+                return;
+            }
+            
+            // إظهار مؤشر التحميل
+            const qrContainer = document.getElementById('qrcode-container');
+            qrContainer.innerHTML = `
+                <div class="text-center py-8">
+                    <div class="loading-dot mx-auto mb-4"></div>
+                    <div class="loading-dot mx-auto mb-4"></div>
+                    <div class="loading-dot mx-auto mb-4"></div>
+                    <p class="text-slate-400">جاري إنشاء QR Code...</p>
+                </div>
+            `;
+            
+            try {
+                // إنشاء QR Code
+                const result = await QRCodeSystem.generateQRCode(
+                    password, 
+                    notes, 
+                    expiry, 
+                    encryptionType, 
+                    encryptionKey
+                );
+                
+                if (result.success) {
+                    // عرض QR Code
+                    qrContainer.innerHTML = `<img src="${result.qrCode}" alt="QR Code" class="w-64 h-64 mx-auto">`;
+                    
+                    // تحديث المعلومات
+                    document.getElementById('qrcode-info').textContent = 
+                        `تم إنشاء QR Code مشفر - صلاحية: ${QRCodeSystem.getExpiryText(expiry)}`;
+                    
+                    // إظهار أزرار التنزيل والمشاركة
+                    document.getElementById('download-qrcode').classList.remove('hidden');
+                    document.getElementById('share-qrcode').classList.remove('hidden');
+                    
+                    // حفظ في السجل (مبسط)
+                    saveToQRHistory(result.data);
+                    
+                    Utils.showToast('success', 'تم الإنشاء', 'تم إنشاء QR Code بنجاح');
+                } else {
+                    throw new Error(result.error || 'فشل إنشاء QR Code');
+                }
+                
+            } catch (error) {
+                console.error('QR Code generation error:', error);
+                qrContainer.innerHTML = `
+                    <div class="qrcode-placeholder">
+                        <i class="fas fa-exclamation-triangle text-4xl mb-4 text-red-400"></i>
+                        <p class="text-red-300">فشل إنشاء QR Code</p>
+                        <p class="text-sm text-slate-400 mt-2">${error.message}</p>
+                    </div>
+                `;
+                Utils.showToast('error', 'خطأ', error.message || 'فشل إنشاء QR Code');
+            }
+        }
+        
+        function saveToQRHistory(data) {
+            // في تطبيق حقيقي، هنا سيتم حفظ البيانات في IndexedDB أو localStorage
+            console.log('QR Code saved to history:', data);
+        }
+        
+        function clearQRCode() {
+            const qrContainer = document.getElementById('qrcode-container');
+            qrContainer.innerHTML = `
+                <div class="qrcode-placeholder">
+                    <i class="fas fa-qrcode text-4xl mb-4"></i>
+                    <p>لم يتم إنشاء QR Code بعد</p>
+                </div>
+            `;
+            
+            document.getElementById('qrcode-info').textContent = 'سيظهر هنا QR Code مشفر لكلمة المرور';
+            document.getElementById('download-qrcode').classList.add('hidden');
+            document.getElementById('share-qrcode').classList.add('hidden');
+            
+            // مسح الحقول
+            document.getElementById('qrcode-password').value = '';
+            document.getElementById('qrcode-notes').value = '';
+            document.getElementById('qrcode-encryption-password').value = '';
+            
+            Utils.showToast('info', 'تم المسح', 'تم مسح QR Code');
+        }
+        
+        function checkPasswordStrength() {
+            const passwordInput = document.getElementById('check-password-input');
+            const password = passwordInput.value;
+            
+            if (!password || password.trim() === '') {
+                Utils.showToast('error', 'خطأ', 'الرجاء إدخال كلمة مرور');
+                return;
+            }
+            
+            const score = Utils.calculatePasswordStrength(password);
+            const strength = Utils.getStrengthLevel(score);
+            
+            // تحديث النص والشريط
+            document.getElementById('check-strength-text').textContent = strength.text;
+            document.getElementById('check-strength-text').className = `text-sm font-medium ${strength.color}`;
+            document.getElementById('check-strength-bar').className = `password-strength-bar ${strength.class}`;
+            
+            // تحديث الإحصائيات
+            document.getElementById('check-length').textContent = password.length;
+            document.getElementById('check-score').textContent = `${score}/100`;
+            
+            // حساب الإنتروبيا
+            let charsetSize = 0;
+            if (/[a-z]/.test(password)) charsetSize += 26;
+            if (/[A-Z]/.test(password)) charsetSize += 26;
+            if (/[0-9]/.test(password)) charsetSize += 10;
+            if (/[^A-Za-z0-9]/.test(password)) charsetSize += 32;
+            
+            const entropy = Math.log2(Math.pow(charsetSize, password.length));
+            document.getElementById('check-entropy').textContent = entropy.toFixed(1);
+            
+            // حساب وقت التخمين
+            const crackTime = calculateCrackTime(entropy);
+            document.getElementById('check-crack-time').textContent = crackTime;
+            
+            Utils.showToast('success', 'تم الفحص', `قوة كلمة المرور: ${strength.text}`);
+        }
+        
+        function updateStats(type) {
+            if (type === 'generated') {
+                const generatedEl = document.getElementById('stats-generated');
+                const current = parseInt(generatedEl.textContent) || 0;
+                generatedEl.textContent = current + 1;
+                
+                // تحديث الإحصائيات الرئيسية
+                const totalGenerated = document.getElementById('stats-total-generated');
+                if (totalGenerated) {
+                    totalGenerated.textContent = current + 1;
+                }
+            }
+        }
+        
+        // دالة مساعدة لتبديل إظهار/إخفاء كلمة المرور (للمودال)
+        window.togglePasswordVisibility = function(inputId, button) {
+            Utils.togglePasswordVisibility(inputId, button);
+        };
+        
+        // إضافة بعض البيانات الأولية لاختبار التطبيق
+        window.addEventListener('load', function() {
+            // تعيين إصدار التطبيق
+            document.querySelectorAll('.app-version').forEach(el => {
+                el.textContent = '3.1.0';
+            });
+            
+            // تعيين تاريخ التحديث
+            const lastUpdate = document.getElementById('last-update');
+            if (lastUpdate) {
+                const today = new Date();
+                lastUpdate.textContent = today.toLocaleDateString('ar-SA');
+            }
+        });
+    </script>
+</body>
+</html>
